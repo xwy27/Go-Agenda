@@ -16,7 +16,7 @@ func initSession() error {
 		return nil
 	}
 	isSessionInit = true
-	sessionStorage.filePath = "../data/session.json"
+	sessionStorage.filePath = "data/session.json"
 	return loadSession()
 }
 

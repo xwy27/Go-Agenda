@@ -4,6 +4,7 @@ package model
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"os"
 )
 
@@ -25,7 +26,7 @@ func (storage *Storage) load(v interface{}) error {
 	}
 	defer file.Close()
 	err = json.NewDecoder(file).Decode(v)
-	if err != nil {
+	if err != nil && err != io.EOF {
 		return errors.New("Error occuried while loading JSON file:\n" + err.Error())
 	}
 	return nil
