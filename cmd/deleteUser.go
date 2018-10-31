@@ -18,7 +18,6 @@ import (
 	"Go-Agenda/global"
 	"Go-Agenda/model"
 	"Go-Agenda/operation"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -36,11 +35,7 @@ var deleteUserCmd = &cobra.Command{
 			return
 		}
 		err = operation.DeleteUser(username)
-		if err != nil {
-			global.ErrorLog.Println(err.Error())
-			return
-		}
-		fmt.Println("Your account has been deleted.")
+		global.PrintError(err, "Your account has been deleted.")
 	},
 }
 

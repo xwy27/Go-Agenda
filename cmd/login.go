@@ -17,7 +17,6 @@ package cmd
 import (
 	"Go-Agenda/global"
 	"Go-Agenda/operation"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -31,11 +30,7 @@ var loginCmd = &cobra.Command{
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 		err := operation.LoginUser(username, password)
-		if err != nil {
-			global.ErrorLog.Println(err.Error())
-			return
-		}
-		fmt.Println("Login successfully.")
+		global.ErrorLog(err, "Login successfully.")
 	},
 }
 
