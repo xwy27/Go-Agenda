@@ -28,35 +28,92 @@ type usersType struct {
 
 var users usersType
 var usersDB usersJSON
+var isUserInit = false
 
-// InitUsers is the function to initialize Users
-func InitUsers() error {
+func initUsers() error {
+	if isUserInit {
+		return nil
+	}
+	isUserInit = true
 	users.storage.filePath = "../data/users.json"
 	users.dictionary = make(map[string]*User)
-	load()
-	return nil
+	return loadUsers()
 }
 
 // AddUser 成功返回nil
 func AddUser(user *User) error {
+	if err := initUsers(); err != nil {
+		return err
+	}
 	if existedUser := users.dictionary[user.Username]; existedUser != nil {
 		return errors.New("username existed")
 	}
 	users.dictionary[user.Username] = user
-	return nil
+	return writeUsers()
 }
 
 // DeleteUser 成功返回nil
-func DeleteUser(user *User) error { return nil }
+func DeleteUser(username string) error {
+	if err := initUsers(); err != nil {
+		return err
+	}
+	if existedUser := users.dictionary[username]; existedUser != nil {
+		meetings := FindMeetingsBy(func(meeting *Meeting) bool {
+			for _, participator := range meeting.Participators {
+				if participator.Username == username {
+					return true
+				}
+			}
+			return false
+		})
 
-/*
-func FindUsersBy(filter func(*User) bool) ([]User, error) {
-	return []User{}, nil
+		for _, meeting := range meetings {
+			err := DeleteParticipator(meeting.Title, username)
+			if err != nil {
+				return err
+			}
+		}
+
+		meetings = FindMeetingsBy(func(meeting *Meeting) bool {
+			if username == meeting.Sponsor {
+				return true
+			}
+			return false
+		})
+
+		for _, meeting := range meetings {
+			err := DeleteMeeting(meeting.Title)
+			if err != nil {
+				return err
+			}
+		}
+
+		delete(users.dictionary, username)
+		return writeUsers()
+	}
+	return errors.New("no such user")
 }
-*/
+
+func FindUsersBy(filter func(*User) bool) ([]User, error) {
+	if err := initUsers(); err != nil {
+		return nil, err
+	}
+
+	var resultUsers []User
+	for _, user := range users.dictionary {
+		if filter(user) {
+			resultUsers = append(resultUsers, *user)
+		}
+	}
+
+	return resultUsers, nil
+}
 
 // FindUserByName 失败返回nil
 func FindUserByName(username string) *User {
+	if err := initUsers(); err != nil {
+		return nil
+	}
 	if user, ok := users.dictionary[username]; ok {
 		return user
 	}
@@ -65,6 +122,9 @@ func FindUserByName(username string) *User {
 
 // CheckPass 成功返回true
 func CheckPass(username, password string) bool {
+	if err := initUsers(); err != nil {
+		return false
+	}
 	if user, ok := users.dictionary[username]; ok &&
 		user.Password == password {
 		return true
@@ -72,10 +132,21 @@ func CheckPass(username, password string) bool {
 	return false
 }
 
-func load() {
-
+func loadUsers() error {
+	err := users.storage.load(&usersDB)
+	if err != nil {
+		return err
+	}
+	for _, user := range usersDB.Users {
+		users.dictionary[user.Username] = &user
+	}
+	return nil
 }
 
-func write() {
-
+func writeUsers() error {
+	var newUserDB usersJSON
+	for _, user := range users.dictionary {
+		newUserDB.Users = append(newUserDB.Users, *user)
+	}
+	return users.storage.write(&newUserDB)
 }
