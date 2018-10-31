@@ -4,16 +4,16 @@ package entity
 // the info of any single
 // user account
 type User struct {
-	username string
-	password string
-	email    string
-	phone    string
+	Username string
+	Password string
+	Email    string
+	Phone    string
 }
 
 // usersJSON specific the json type of
 // users
 type usersJSON struct {
-	users []User
+	Users []User
 }
 
 // UsersType
