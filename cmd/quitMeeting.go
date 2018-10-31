@@ -23,15 +23,14 @@ import (
 // quitMeetingCmd represents the quitMeeting command
 var quitMeetingCmd = &cobra.Command{
 	Use:   "quitMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Quit a meeting",
+	Long:  `Quit a specified meeting with given title.`,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("quitMeeting called")
+		title, _ := cmd.Flags().GetString("title")
+		// TODO:Error handle
+		fmt.Println("quitMeeting called by " + title)
+		// Quit meeting
 	},
 }
 
@@ -46,5 +45,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// quitMeetingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	quitMeetingCmd.Flags().StringP("title", "t", "", "title for meeting")
 }

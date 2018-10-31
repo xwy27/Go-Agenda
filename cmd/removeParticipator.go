@@ -23,15 +23,17 @@ import (
 // removeParticipatorCmd represents the removeParticipator command
 var removeParticipatorCmd = &cobra.Command{
 	Use:   "removeParticipator",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Remove a participator for a meeting",
+	Long: `Remove a participator for a sponsored meeting.
+Specify the meeting title and the new participator name.`,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("removeParticipator called")
+		title, _ := cmd.Flags().GetString("title")
+		participator, _ := cmd.Flags().GetString("participator")
+		// TODO:Error handle
+		fmt.Println("removeParticipator called by " + title)
+		fmt.Println("removeParticipator called by " + participator)
+		// TODO:remove Participator
 	},
 }
 
@@ -46,5 +48,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// removeParticipatorCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	addParticipatorCmd.Flags().StringP("title", "t", "", "Meeting title")
+	addParticipatorCmd.Flags().StringP("participator", "p", "", "Meeting participator")
 }

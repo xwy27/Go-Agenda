@@ -24,13 +24,14 @@ import (
 var registerCmd = &cobra.Command{
 	Use:   "register",
 	Short: "Register an account",
-	Long: `Register an account in Agenda and start with managing your own meetings 
-	and attending others' meetings!`,
+	Long:  `Register an account in Agenda with username, password, email and telephone. Start with managing your own meetings and attending others' meetings!`,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 		email, _ := cmd.Flags().GetString("email")
 		telephone, _ := cmd.Flags().GetString("telephone")
+		// TODO:Error handle
 		fmt.Println("register called by" + username)
 		fmt.Println("register called by" + password)
 		fmt.Println("register called by" + email)

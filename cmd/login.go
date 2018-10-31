@@ -23,15 +23,14 @@ import (
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Log in Agenda",
+	Long:  `Log in Aenda with a registered account, which needs username and password.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("login called")
+		username, _ := cmd.Flags().GetString("username")
+		password, _ := cmd.Flags().GetString("password")
+		// TODO:Log in
+		fmt.Println("login called by " + username)
+		fmt.Println("login called by " + password)
 	},
 }
 
@@ -46,5 +45,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// loginCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	loginCmd.Flags().StringP("username", "u", "Anonymous", "Username")
+	loginCmd.Flags().StringP("password", "p", "", "Password")
 }

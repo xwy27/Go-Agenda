@@ -23,15 +23,17 @@ import (
 // queryMeetingsCmd represents the queryMeetings command
 var queryMeetingsCmd = &cobra.Command{
 	Use:   "queryMeetings",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Query attended meetings",
+	Long: `Query user attended meetings by a given time interval which returns all the matched meetings
+with their title, sponsor, participator, startTime and endTime`,
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("queryMeetings called")
+		startTime, _ := cmd.Flags().GetString("startTime")
+		endTime, _ := cmd.Flags().GetString("endTime")
+		// Error handle
+		fmt.Println("queryMeetings called by " + startTime)
+		fmt.Println("queryMeetings called by " + endTime)
+		// TODO:Query
 	},
 }
 
@@ -46,5 +48,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// queryMeetingsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	queryMeetingsCmd.Flags().StringP("startTime", "s", "", "start time for query")
+	queryMeetingsCmd.Flags().StringP("endTime", "e", "", "end time for query")
 }

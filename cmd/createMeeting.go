@@ -23,15 +23,27 @@ import (
 // createMeetingCmd represents the createMeeting command
 var createMeetingCmd = &cobra.Command{
 	Use:   "createMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Create a meeting",
+	Long: `With login user, he/she can create a meeting by providing the title, participators, startTime and endTime.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Validation:
+Title, participators, startTime and endTime are all required. EndTime must be after startTime.
+Input requirement is shown in below example.
+
+Example:
+Agenda createMeeting -t=Title -p=user1,user2,user3 -s=2006-01-02 15:04 -e=2006-01-03 15:04`,
+
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("createMeeting called")
+		title, _ := cmd.Flags().GetString("title")
+		participators, _ := cmd.Flags().GetString("participators")
+		startTime, _ := cmd.Flags().GetString("startTime")
+		endTime, _ := cmd.Flags().GetString("endTime")
+		// TODO:Error handle
+		fmt.Println("createMeeting called by " + title)
+		fmt.Println("createMeeting called by " + participators)
+		fmt.Println("createMeeting called by " + startTime)
+		fmt.Println("createMeeting called by " + endTime)
+		// TODO:Create meeting
 	},
 }
 
@@ -46,5 +58,8 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// createMeetingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	createMeetingCmd.Flags().StringP("title", "t", "", "Title for meeting")
+	createMeetingCmd.Flags().StringP("participators", "p", "", "participators for meeting")
+	createMeetingCmd.Flags().StringP("startTime", "s", "", "start time for meeting")
+	createMeetingCmd.Flags().StringP("endTime", "e", "", "end time for meeting")
 }
