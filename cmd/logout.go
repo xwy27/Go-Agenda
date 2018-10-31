@@ -15,7 +15,8 @@
 package cmd
 
 import (
-	"fmt"
+	"Go-Agenda/global"
+	"Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +28,8 @@ var logoutCmd = &cobra.Command{
 	Long:  `Log out current account`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO:log out
-		fmt.Println("Logout")
+		err := operation.LogoutUser()
+		global.PrintError(err, "You've successfully logged out!")
 	},
 }
 
