@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"Go-Agenda/global"
+	"Go-Agenda/operation"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -24,13 +26,16 @@ import (
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Log in Agenda",
-	Long:  `Log in Aenda with a registered account, which needs username and password.`,
+	Long:  `Log in Agenda with a registered account, which needs username and password.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
-		// TODO:Log in
-		fmt.Println("login called by " + username)
-		fmt.Println("login called by " + password)
+		err := operation.LoginUser(username, password)
+		if err != nil {
+			global.ErrorLog.Println(err.Error())
+			return
+		}
+		fmt.Println("Login successfully.")
 	},
 }
 

@@ -15,6 +15,8 @@
 package cmd
 
 import (
+	"Go-Agenda/global"
+	"Go-Agenda/operation"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -37,6 +39,12 @@ var registerCmd = &cobra.Command{
 		fmt.Println("register called by" + email)
 		fmt.Println("register called by" + telephone)
 		// TODO:Register an account
+		err := operation.RegisterUser(username, password, email, telephone)
+		if err != nil {
+			global.ErrorLog.Println(err.Error())
+			return
+		}
+		fmt.Println("Register successfully")
 	},
 }
 
