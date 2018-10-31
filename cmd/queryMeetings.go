@@ -15,7 +15,10 @@
 package cmd
 
 import (
+	"Go-Agenda/global"
+	"Go-Agenda/operation"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -28,12 +31,29 @@ var queryMeetingsCmd = &cobra.Command{
 with their title, sponsor, participator, startTime and endTime`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		startTime, _ := cmd.Flags().GetString("startTime")
-		endTime, _ := cmd.Flags().GetString("endTime")
+		startTime, err := cmd.Flags().GetString("startTime")
+		global.PrintError(err, "")
+		endTime, err := cmd.Flags().GetString("endTime")
+		global.PrintError(err, "")
 		// Error handle
 		fmt.Println("queryMeetings called by " + startTime)
 		fmt.Println("queryMeetings called by " + endTime)
-		// TODO:Query
+		// Query
+		meetings, err := operation.QueryMeetings(startTime, endTime)
+		global.PrintError(err, "Query results:")
+
+		for _, m := range meetings {
+			fmt.Println("Title:\t\t\t" + m.Title)
+			fmt.Println("Sponsor:\t\t " + m.Sponsor)
+			start := time.Unix(m.StartTime, 0)
+			fmt.Println("StartTime:\t  " + start.Format(time.RFC1123))
+			end := time.Unix(m.EndTime, 0)
+			fmt.Println("EndTime:\t\t " + end.Format(time.RFC1123))
+			fmt.Println("Participators: ")
+			for _, p := range m.Participators {
+				fmt.Println("\t\t" + p.Username)
+			}
+		}
 	},
 }
 

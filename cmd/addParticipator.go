@@ -15,7 +15,8 @@
 package cmd
 
 import (
-	"fmt"
+	"Go-Agenda/global"
+	"Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -28,12 +29,14 @@ var addParticipatorCmd = &cobra.Command{
 Specify the meeting title and the new participator name.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		title, _ := cmd.Flags().GetString("title")
-		participator, _ := cmd.Flags().GetString("participator")
-		// TODO:Error handle
-		fmt.Println("addParticipator called by " + title)
-		fmt.Println("addParticipator called by " + participator)
-		// TODO:add Participator
+		title, err := cmd.Flags().GetString("title")
+		global.PrintError(err, "")
+		participator, err := cmd.Flags().GetString("participator")
+		global.PrintError(err, "")
+		// fmt.Println("addParticipator called by " + title)
+		// fmt.Println("addParticipator called by " + participator)
+		global.PrintError(operation.AddParticipator(title, participator),
+			"Add "+participator+" to "+title+" successfully")
 	},
 }
 

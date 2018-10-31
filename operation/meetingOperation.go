@@ -45,6 +45,7 @@ func ValidateMeeting(meeting *model.Meeting) error {
 		}
 		return false
 	})
+
 	if err != nil {
 		return err
 	}
@@ -71,6 +72,7 @@ func ValidateMeeting(meeting *model.Meeting) error {
 			}
 			return false
 		})
+
 		if err != nil {
 			return err
 		}
@@ -292,6 +294,9 @@ func QueryMeetings(startTime, endTime string) ([]model.Meeting, error) {
 	})
 }
 
+// ClearMeetings clears all the meetings sponsored by current user and returns,
+// if something wrong, error
+// Log in required
 func ClearMeetings() error {
 	currentUser, err := model.GetCurrentUserName()
 	if err != nil {
@@ -304,6 +309,10 @@ func ClearMeetings() error {
 		}
 		return false
 	})
+
+	if err != nil {
+		return err
+	}
 
 	for _, m := range meetings {
 		err = model.DeleteMeeting(m.Title)

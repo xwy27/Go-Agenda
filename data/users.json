@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 {"Users":null}
+=======
+{"Users":[{"Username":"Admin","Password":"123456","Email":"123@123","Phone":"12345678910"}]}
+>>>>>>> Stashed changes
