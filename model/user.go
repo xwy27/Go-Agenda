@@ -35,7 +35,7 @@ func initUsers() error {
 		return nil
 	}
 	isUserInit = true
-	users.storage.filePath = "../data/users.json"
+	users.storage.filePath = "data/users.json"
 	users.dictionary = make(map[string]*User)
 	return loadUsers()
 }
@@ -58,7 +58,7 @@ func DeleteUser(username string) error {
 		return err
 	}
 	if existedUser := users.dictionary[username]; existedUser != nil {
-		meetings := FindMeetingsBy(func(meeting *Meeting) bool {
+		meetings, err := FindMeetingsBy(func(meeting *Meeting) bool {
 			for _, participator := range meeting.Participators {
 				if participator.Username == username {
 					return true
@@ -67,6 +67,10 @@ func DeleteUser(username string) error {
 			return false
 		})
 
+		if err != nil {
+			return err
+		}
+
 		for _, meeting := range meetings {
 			err := DeleteParticipator(meeting.Title, username)
 			if err != nil {
@@ -74,12 +78,16 @@ func DeleteUser(username string) error {
 			}
 		}
 
-		meetings = FindMeetingsBy(func(meeting *Meeting) bool {
+		meetings, err = FindMeetingsBy(func(meeting *Meeting) bool {
 			if username == meeting.Sponsor {
 				return true
 			}
 			return false
 		})
+
+		if err != nil {
+			return err
+		}
 
 		for _, meeting := range meetings {
 			err := DeleteMeeting(meeting.Title)

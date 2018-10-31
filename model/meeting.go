@@ -32,7 +32,7 @@ func initMeetings() error {
 		return nil
 	}
 	isMeetingInit = true
-	meetings.storage.filePath = "../data/meetings.json"
+	meetings.storage.filePath = "data/meetings.json"
 	meetings.dictionary = make(map[string]*Meeting)
 	return loadSession()
 }
@@ -53,9 +53,9 @@ func DeleteMeeting(title string) error {
 	return nil
 }
 
-func FindMeetingsBy(filter func(*Meeting) bool) []Meeting {
+func FindMeetingsBy(filter func(*Meeting) bool) ([]Meeting, error) {
 	if err := initMeetings(); err != nil {
-		return []Meeting{}
+		return []Meeting{}, err
 	}
 	var resultMeetings []Meeting
 	for _, meeting := range meetings.dictionary {
@@ -63,17 +63,17 @@ func FindMeetingsBy(filter func(*Meeting) bool) []Meeting {
 			resultMeetings = append(resultMeetings, *meeting)
 		}
 	}
-	return []Meeting{}
+	return resultMeetings, nil
 }
 
-func FindMeetingByTitle(title string) *Meeting {
+func FindMeetingByTitle(title string) (*Meeting, error) {
 	if err := initMeetings(); err != nil {
-		return nil
+		return nil, err
 	}
 	if meeting, ok := meetings.dictionary[title]; ok {
-		return meeting
+		return meeting, nil
 	}
-	return nil
+	return nil, nil
 }
 
 func DeleteParticipator(title, username string) error {
