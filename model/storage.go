@@ -36,9 +36,9 @@ func (storage *Storage) load(v interface{}) error {
 // write the data to the file specificed by
 // storage from v
 func (storage *Storage) write(v interface{}) error {
-	file, err := os.Open(storage.filePath)
+	file, err := os.Create(storage.filePath)
 	if err != nil {
-		return errors.New("Error occuried while opening file to write:\n" + err.Error())
+		return errors.New("Error occuried while creating file to write:\n" + err.Error())
 	}
 	defer file.Close()
 	err = json.NewEncoder(file).Encode(v)
