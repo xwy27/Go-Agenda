@@ -13,7 +13,7 @@ type participator = model.Participator
 const timeFormat = "2006-01-02 15:04:05"
 
 // ValidateMeeting validates meeting time properties and returns, if something wrong, an error
-// an valid meeting contains start time and end time and the time interval is right while,
+// Valid meeting contains start time and end time and the time interval is right while,
 // sponsor and participators only attend this new meeting in the meeting time interval
 func ValidateMeeting(meeting *model.Meeting) error {
 	// Validate Start Time
@@ -47,8 +47,8 @@ func ValidateMeeting(meeting *model.Meeting) error {
 	})
 
 	for _, m := range SMeetings {
-		if !((end.Before(time.Unix((int64)(m.StartTime), 0))) ||
-			(start.After(time.Unix((int64)(m.EndTime), 0)))) {
+		if !((end.Before(time.Unix(m.StartTime, 0))) ||
+			(start.After(time.Unix(m.EndTime, 0)))) {
 			return errors.New("You have meeting to attend in the time interval")
 		}
 	}
@@ -76,10 +76,11 @@ func ValidateMeeting(meeting *model.Meeting) error {
 			return errors.New("You have meeting to attend in the time interval")
 		}
 	}
+
 	return nil
 }
 
-// AddMeeting adds a valid meeting to db
+// AddMeeting adds a valid meeting to db and returns, if something wrong, error
 func AddMeeting(Title string, Participators []participator, StartTime string, EndTime string) error {
 	// Check log in
 	currentUser, err := model.GetCurrentUserName()
@@ -102,8 +103,14 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 		return errors.New("Meeting Participator is required")
 	}
 
-	// TODO:Check Sponsor without in participator
+	// Check Sponsor without in participator
+	for _, p := range Participators {
+		if currentUser == p.Username {
+			return errors.New("You could not attend meeting sponsored by you as a participator")
+		}
+	}
 
+	// Check valid time
 	s, err := time.Parse(timeFormat, StartTime)
 	if err != nil {
 		return errors.New("Start Time is invalid")
@@ -118,7 +125,7 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 
 	newMeeting := &model.Meeting{
 		Title:         Title,
-		Sponsor:       currentUser, //TODO:Change code for cur User
+		Sponsor:       currentUser,
 		Participators: Participators,
 		StartTime:     start,
 		EndTime:       end,
@@ -128,10 +135,95 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 		return err
 	}
 
-	model.AddMeeting(newMeeting)
-	return nil
+	err = model.AddMeeting(newMeeting)
+	return err
 }
 
-func DeleteMeeting(Title string) error {
+// DeleteMeeting deletes a meeting by meeting name and returns, if something wrong, error
+// Meeting must exist and login user must be the sponsor
+func DeleteMeeting(title string) error {
+	currentUser, err := model.GetCurrentUserName()
+	if err != nil {
+		return err
+	}
 
+	meeting := model.FindMeetingByTitle(title)
+	if meeting == nil {
+		return errors.New("Meeting: " + title + " does not exist")
+	}
+
+	if meeting.Sponsor != currentUser {
+		return errors.New("You don't have the authority to delete others' meeting")
+	}
+
+	return model.DeleteMeeting(title)
+}
+
+// DeleteParticipator deletes a participator in a meeting and returns, if something wrong, error
+// Meeting must exist, login user must be the sponsor and the user must exist and be the participator
+func DeleteParticipator(title, username string) error {
+	currentUser, err := model.GetCurrentUserName()
+	if err != nil {
+		return err
+	}
+
+	meeting := model.FindMeetingByTitle(title)
+	if meeting == nil {
+		return errors.New("Meeting: " + title + " does not exist")
+	}
+	
+	if meeting.Sponsor != currentUser {
+		return errors.New("You don't have the authority to delete participator of others' meeting")
+	}
+
+	user := model.FindUserByName(username)
+	if user == nil {
+		return errors.New("User: " + username + " does not exist")
+	}
+
+	for _, p := meeting.Participators {
+		if p.Username == username {
+			return model.DeleteParticipator(title, username)
+		}
+	}
+
+	return errors.New(username + " is not a participator of meeting: " + title)
+}
+
+// QuitMeeting helps login user quit a meeting and returns, if something wrong, error
+// Meeting must exist and login user must be the participator of the meeting
+func QuitMeeting(title string) error {
+	currentUser, err := model.GetCurrentUserName()
+	if err != nil {
+		return err
+	}
+
+	meeting := model.FindMeetingByTitle(title)
+	if meeting != nil {
+		return errors.New("Meeting: " + title + " does not exist")
+	}
+
+	for _, p := range meeting.Participators {
+		if p.Username == currentUser {
+			return model.DeleteParticipator(title, currentUser)
+		}
+	}
+
+	return errors.New("You have not attended the meeting")
+}
+
+// AddParticipator adds the user into a meeting and returns, if something wrong, error
+// Meeting must exist and user must exist
+func AddParticipator(title, username string) error {
+	meeting := model.FindMeetingByTitle(title)
+	if meeting == nil {
+		return errors.New("Meeting: " + title + " does not exist")
+	}
+
+	user := model.FindUserByName(username)
+	if user == nil {
+		return errors.New("User: " + username + " does not exist")
+	}
+
+	return model.AddParticipator(title, username)
 }
