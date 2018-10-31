@@ -34,7 +34,7 @@ func ValidateMeeting(meeting *model.Meeting) error {
 	}
 
 	// Validate unique meeting for sponsor
-	SMeetings := model.FindMeetingsBy(func(m *model.Meeting) bool {
+	SMeetings, err := model.FindMeetingsBy(func(m *model.Meeting) bool {
 		if m.Sponsor == meeting.Sponsor {
 			return true
 		}
@@ -45,6 +45,9 @@ func ValidateMeeting(meeting *model.Meeting) error {
 		}
 		return false
 	})
+	if err != nil {
+		return err
+	}
 
 	for _, m := range SMeetings {
 		if !((end.Before(time.Unix(m.StartTime, 0))) ||
@@ -56,7 +59,7 @@ func ValidateMeeting(meeting *model.Meeting) error {
 	// Validate unique meeting for participator
 	var PMeetings []model.Meeting
 	for _, participator := range meeting.Participators {
-		PMeetings = append(PMeetings, model.FindMeetingsBy(func(m *model.Meeting) bool {
+		PMeetings, err = append(PMeetings, model.FindMeetingsBy(func(m *model.Meeting) bool {
 			if m.Sponsor == participator.Username {
 				return true
 			}
@@ -68,6 +71,9 @@ func ValidateMeeting(meeting *model.Meeting) error {
 			}
 			return false
 		})...)
+	}
+	if err != nil {
+		return err
 	}
 
 	for _, m := range PMeetings {
@@ -94,7 +100,11 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 	}
 
 	// Check Title existance
-	if model.FindMeetingByTitle(Title) != nil {
+	m, err := model.FindMeetingByTitle(Title);
+	if err != nil {
+		return err
+	}
+	if m != nil {
 		return errors.New("Meeting: " + Title + " is existed")
 	}
 
@@ -153,7 +163,10 @@ func DeleteMeeting(title string) error {
 		return err
 	}
 
-	meeting := model.FindMeetingByTitle(title)
+	meeting, err := model.FindMeetingByTitle(title)
+	if err != nil {
+		return err
+	}
 	if meeting == nil {
 		return errors.New("Meeting: " + title + " does not exist")
 	}
@@ -165,6 +178,25 @@ func DeleteMeeting(title string) error {
 	return model.DeleteMeeting(title)
 }
 
+// AddParticipator adds the user into a meeting and returns, if something wrong, error
+// Meeting must exist and user must exist
+func AddParticipator(title, username string) error {
+	meeting, err := model.FindMeetingByTitle(title)
+	if err != nil {
+		return err
+	}
+	if meeting == nil {
+		return errors.New("Meeting: " + title + " does not exist")
+	}
+
+	user := model.FindUserByName(username)
+	if user == nil {
+		return errors.New("User: " + username + " does not exist")
+	}
+
+	return model.AddParticipator(title, username)
+}
+
 // DeleteParticipator deletes a participator in a meeting and returns, if something wrong, error
 // Meeting must exist, login user must be the sponsor and the user must exist and be the participator
 func DeleteParticipator(title, username string) error {
@@ -173,7 +205,10 @@ func DeleteParticipator(title, username string) error {
 		return err
 	}
 
-	meeting := model.FindMeetingByTitle(title)
+	meeting, err := model.FindMeetingByTitle(title)
+	if err != nil {
+		return err
+	}
 	if meeting == nil {
 		return errors.New("Meeting: " + title + " does not exist")
 	}
@@ -204,7 +239,10 @@ func QuitMeeting(title string) error {
 		return err
 	}
 
-	meeting := model.FindMeetingByTitle(title)
+	meeting, err := model.FindMeetingByTitle(title)
+	if err != nil {
+		return err
+	}
 	if meeting != nil {
 		return errors.New("Meeting: " + title + " does not exist")
 	}
@@ -218,18 +256,58 @@ func QuitMeeting(title string) error {
 	return errors.New("You have not attended the meeting")
 }
 
-// AddParticipator adds the user into a meeting and returns, if something wrong, error
-// Meeting must exist and user must exist
-func AddParticipator(title, username string) error {
-	meeting := model.FindMeetingByTitle(title)
-	if meeting == nil {
-		return errors.New("Meeting: " + title + " does not exist")
+
+// QueryMeetings queries the meetings matching the given time interval and returns,
+// if something wrong, error
+func QueryMeetings(startTime, endTime string) ([]model.Meeting, error) {
+	currentUser, err := model.GetCurrentUserName()
+	if err != nil {
+		return err
 	}
 
-	user := model.FindUserByName(username)
-	if user == nil {
-		return errors.New("User: " + username + " does not exist")
+	start, err := time.Parse(timeFormat, startTime)
+	if (err != nil) {
+		return nil, errors.New("Invalid Start Time")
 	}
 
-	return model.AddParticipator(title, username)
+	end, err := time.Parse(timeFormat, endTime)
+	if (err != nil) {
+		return nil, errors.New("Invalid End Time")
+	}
+
+	if start.After(end) {
+		return nil, errors.New("End time must be after Start time")
+	}
+
+	return model.FindMeetingsBy(func(m *model.Meeting) {
+		mStart := time.Unix(m.StartTime, 0)
+		mEnd := time.Unix(m.EndTime, 0)
+		if (mStart.After(start) && mEnd.Before(end)) {
+			return true
+		}
+		return false
+	})
+}
+
+func ClearMeetings() error {
+	currentUser, err := model.GetCurrentUserName()
+	if err != nil {
+		return err
+	}
+
+	meetings, err := model.FindMeetingsBy(func(m *model.Meeting) {
+		if (m.Sponsor == currentUser) {
+			return true
+		}
+		return false
+	})
+
+	for _, m := range meetings {
+		err = model.DeleteMeeting(m.title)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
