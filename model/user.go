@@ -1,5 +1,9 @@
 package model
 
+import (
+	"errors"
+)
+
 // User is a type to store
 // the info of any single
 // user account
@@ -25,7 +29,7 @@ type usersType struct {
 var users usersType
 var usersDB usersJSON
 
-// Init is the function to initialize Users
+// InitUsers is the function to initialize Users
 func InitUsers() error {
 	users.storage.filePath = "../data/users.json"
 	users.dictionary = make(map[string]*User)
@@ -33,10 +37,16 @@ func InitUsers() error {
 	return nil
 }
 
-// 成功返回nil
-func AddUser(user *User) error { return nil }
+// AddUser 成功返回nil
+func AddUser(user *User) error {
+	if existedUser := users.dictionary[user.Username]; existedUser != nil {
+		return errors.New("username existed")
+	}
+	users.dictionary[user.Username] = user
+	return nil
+}
 
-// 成功返回nil
+// DeleteUser 成功返回nil
 func DeleteUser(user *User) error { return nil }
 
 /*
@@ -45,14 +55,21 @@ func FindUsersBy(filter func(*User) bool) ([]User, error) {
 }
 */
 
-// 失败返回nil
+// FindUserByName 失败返回nil
 func FindUserByName(username string) *User {
+	if user, ok := users.dictionary[username]; ok {
+		return user
+	}
 	return nil
 }
 
-// 成功返回true
+// CheckPass 成功返回true
 func CheckPass(username, password string) bool {
-	return true
+	if user, ok := users.dictionary[username]; ok &&
+		user.Password == password {
+		return true
+	}
+	return false
 }
 
 func load() {
