@@ -1,13 +1,13 @@
 package entity
 
-type participator struct {
+type Participator struct {
 	Username string
 }
 
 type Meeting struct {
 	Title         string
 	Sponsor       string
-	Participators []participator
+	Participators []Participator
 	StartTime     int
 	EndTime       int
 }
