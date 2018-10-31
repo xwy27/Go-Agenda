@@ -17,7 +17,6 @@ package cmd
 import (
 	"Go-Agenda/global"
 	"Go-Agenda/model"
-	"Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -29,12 +28,7 @@ var deleteUserCmd = &cobra.Command{
 	Long:  `Delete current login user`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Delete current user
-		username, err := model.GetCurrentUserName()
-		if err != nil {
-			global.ErrorLog.Println(err.Error())
-			return
-		}
-		err = operation.DeleteUser(username)
+		_, err := model.GetCurrentUserName()
 		global.PrintError(err, "Your account has been deleted.")
 	},
 }

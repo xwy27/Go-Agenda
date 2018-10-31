@@ -30,7 +30,7 @@ var loginCmd = &cobra.Command{
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 		err := operation.LoginUser(username, password)
-		global.ErrorLog(err, "Login successfully.")
+		global.PrintError(err, "Login successfully.")
 	},
 }
 
