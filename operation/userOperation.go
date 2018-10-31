@@ -1,7 +1,7 @@
 package operation
 
 import (
-	"github.com/siskonemilia/Go-Agenda/model"
+	"Go-Agenda/model"
 )
 
 func RegisterUser(username, password, email, phone string) error {
