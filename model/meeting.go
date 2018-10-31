@@ -1,4 +1,4 @@
-package entity
+package model
 
 type Participator struct {
 	Username string

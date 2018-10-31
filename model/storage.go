@@ -1,5 +1,5 @@
 // Package entity implements the data models
-package entity
+package model
 
 import (
 	"errors"
