@@ -39,21 +39,27 @@ with their title, sponsor, participator, startTime and endTime`,
 		fmt.Println("queryMeetings called by " + startTime)
 		fmt.Println("queryMeetings called by " + endTime)
 		// Query
-		meetings, err := operation.QueryMeetings(startTime, endTime)
+		meetings, err := operation.QueryMeetings(startTime+":00", endTime+":00")
 		global.PrintError(err, "Query results:")
-
-		for _, m := range meetings {
-			fmt.Println("Title:\t\t\t" + m.Title)
-			fmt.Println("Sponsor:\t\t " + m.Sponsor)
-			start := time.Unix(m.StartTime, 0)
-			fmt.Println("StartTime:\t  " + start.Format(time.RFC1123))
-			end := time.Unix(m.EndTime, 0)
-			fmt.Println("EndTime:\t\t " + end.Format(time.RFC1123))
-			fmt.Println("Participators: ")
-			for _, p := range m.Participators {
-				fmt.Println("\t\t" + p.Username)
+		if len(meetings) != 0 {
+			for index, m := range meetings {
+				fmt.Println("==========================================")
+				fmt.Printf("Meeting %d:\n", index+1)
+				fmt.Println("-Title: " + m.Title)
+				fmt.Println("-Sponsor: " + m.Sponsor)
+				start := time.Unix(m.StartTime, 0)
+				fmt.Println("-StartTime: " + start.Format(time.RFC1123))
+				end := time.Unix(m.EndTime, 0)
+				fmt.Println("-EndTime: " + end.Format(time.RFC1123))
+				fmt.Println("-Participators: ")
+				for _, p := range m.Participators {
+					fmt.Println("  -" + p.Username)
+				}
 			}
+		} else {
+			fmt.Println("Empty.")
 		}
+		fmt.Println("===============End of List================")
 	},
 }
 

@@ -1,6 +1,8 @@
 package model
 
-import "errors"
+import (
+	"errors"
+)
 
 type Participator struct {
 	Username string
@@ -20,7 +22,7 @@ type meetingsJSON struct {
 
 type meetingsType struct {
 	storage    Storage
-	dictionary map[string]*Meeting
+	dictionary map[string]Meeting
 }
 
 var meetings meetingsType
@@ -33,16 +35,16 @@ func initMeetings() error {
 	}
 	isMeetingInit = true
 	meetings.storage.filePath = "data/meetings.json"
-	meetings.dictionary = make(map[string]*Meeting)
-	return loadSession()
+	meetings.dictionary = make(map[string]Meeting)
+	return loadMeetings()
 }
 
 func AddMeeting(meeting *Meeting) error {
 	if err := initMeetings(); err != nil {
 		return err
 	}
-	meetings.dictionary[meeting.Title] = meeting
-	return nil
+	meetings.dictionary[meeting.Title] = Meeting(*meeting)
+	return writeMeetings()
 }
 
 func DeleteMeeting(title string) error {
@@ -50,7 +52,7 @@ func DeleteMeeting(title string) error {
 		return err
 	}
 	delete(meetings.dictionary, title)
-	return nil
+	return writeMeetings()
 }
 
 func FindMeetingsBy(filter func(*Meeting) bool) ([]Meeting, error) {
@@ -59,8 +61,8 @@ func FindMeetingsBy(filter func(*Meeting) bool) ([]Meeting, error) {
 	}
 	var resultMeetings []Meeting
 	for _, meeting := range meetings.dictionary {
-		if filter(meeting) {
-			resultMeetings = append(resultMeetings, *meeting)
+		if filter(&meeting) {
+			resultMeetings = append(resultMeetings, meeting)
 		}
 	}
 	return resultMeetings, nil
@@ -71,7 +73,7 @@ func FindMeetingByTitle(title string) (*Meeting, error) {
 		return nil, err
 	}
 	if meeting, ok := meetings.dictionary[title]; ok {
-		return meeting, nil
+		return &meeting, nil
 	}
 	return nil, nil
 }
@@ -84,6 +86,7 @@ func DeleteParticipator(title, username string) error {
 		for index, participator := range meeting.Participators {
 			if participator.Username == username {
 				meeting.Participators = append(meeting.Participators[:index], meeting.Participators[index+1:]...)
+				meetings.dictionary[title] = meeting
 				break
 			}
 		}
@@ -91,7 +94,7 @@ func DeleteParticipator(title, username string) error {
 		if len(meeting.Participators) == 0 {
 			delete(meetings.dictionary, title)
 		}
-		return nil
+		return writeMeetings()
 	}
 	return errors.New("no such meeting")
 }
@@ -103,7 +106,8 @@ func AddParticipator(title, username string) error {
 
 	if meeting, ok := meetings.dictionary[title]; ok {
 		meeting.Participators = append(meeting.Participators, Participator{username})
-		return nil
+		meetings.dictionary[title] = meeting
+		return writeMeetings()
 	}
 	return errors.New("no such meeting")
 }
@@ -114,7 +118,7 @@ func loadMeetings() error {
 		return err
 	}
 	for _, meeting := range meetingsDB.Meetings {
-		meetings.dictionary[meeting.Title] = &meeting
+		meetings.dictionary[meeting.Title] = Meeting(meeting)
 	}
 	return nil
 }
@@ -122,7 +126,7 @@ func loadMeetings() error {
 func writeMeetings() error {
 	var newMeetingDB meetingsJSON
 	for _, meeting := range meetings.dictionary {
-		newMeetingDB.Meetings = append(newMeetingDB.Meetings, *meeting)
+		newMeetingDB.Meetings = append(newMeetingDB.Meetings, meeting)
 	}
 	return meetings.storage.write(&newMeetingDB)
 }

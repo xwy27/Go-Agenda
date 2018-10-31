@@ -23,7 +23,7 @@ type usersJSON struct {
 // UsersType
 type usersType struct {
 	storage    Storage
-	dictionary map[string]*User
+	dictionary map[string]User
 }
 
 var users usersType
@@ -36,7 +36,7 @@ func initUsers() error {
 	}
 	isUserInit = true
 	users.storage.filePath = "data/users.json"
-	users.dictionary = make(map[string]*User)
+	users.dictionary = make(map[string]User)
 	return loadUsers()
 }
 
@@ -45,10 +45,10 @@ func AddUser(user *User) error {
 	if err := initUsers(); err != nil {
 		return err
 	}
-	if existedUser := users.dictionary[user.Username]; existedUser != nil {
+	if _, existedUser := users.dictionary[user.Username]; existedUser {
 		return errors.New("username existed")
 	}
-	users.dictionary[user.Username] = user
+	users.dictionary[user.Username] = User(*user)
 	return writeUsers()
 }
 
@@ -57,7 +57,7 @@ func DeleteUser(username string) error {
 	if err := initUsers(); err != nil {
 		return err
 	}
-	if existedUser := users.dictionary[username]; existedUser != nil {
+	if _, existedUser := users.dictionary[username]; existedUser {
 		meetings, err := FindMeetingsBy(func(meeting *Meeting) bool {
 			for _, participator := range meeting.Participators {
 				if participator.Username == username {
@@ -109,8 +109,8 @@ func FindUsersBy(filter func(*User) bool) ([]User, error) {
 
 	var resultUsers []User
 	for _, user := range users.dictionary {
-		if filter(user) {
-			resultUsers = append(resultUsers, *user)
+		if filter(&user) {
+			resultUsers = append(resultUsers, user)
 		}
 	}
 
@@ -123,7 +123,7 @@ func FindUserByName(username string) *User {
 		return nil
 	}
 	if user, ok := users.dictionary[username]; ok {
-		return user
+		return &user
 	}
 	return nil
 }
@@ -146,7 +146,7 @@ func loadUsers() error {
 		return err
 	}
 	for _, user := range usersDB.Users {
-		users.dictionary[user.Username] = &user
+		users.dictionary[user.Username] = User(user)
 	}
 	return nil
 }
@@ -154,7 +154,7 @@ func loadUsers() error {
 func writeUsers() error {
 	var newUserDB usersJSON
 	for _, user := range users.dictionary {
-		newUserDB.Users = append(newUserDB.Users, *user)
+		newUserDB.Users = append(newUserDB.Users, user)
 	}
 	return users.storage.write(&newUserDB)
 }
