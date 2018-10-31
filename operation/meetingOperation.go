@@ -1,22 +1,21 @@
 package operation
 
 import (
+	"Go-Agenda/model"
 	"errors"
 	"time"
-
-	"github.com/siskonemilia/Go-Agenda/model"
 )
 
-type meeting = model.Meeting
 type participator = model.Participator
-type session = model.Session
+
+// type session = model.Session
 
 const timeFormat = "2006-01-02 15:04:05"
 
-// validateMeeting validates meeting time properties and returns, if something wrong, an error
+// ValidateMeeting validates meeting time properties and returns, if something wrong, an error
 // an valid meeting contains start time and end time and the time interval is right while,
-// Participators only attend this new meeting in the meeting time interval
-func validateMeeting(meeting *meeting) error {
+// sponsor and participators only attend this new meeting in the meeting time interval
+func ValidateMeeting(meeting *model.Meeting) error {
 	// Validate Start Time
 	if meeting.StartTime == 0 {
 		return errors.New("Start Time is required")
@@ -28,14 +27,14 @@ func validateMeeting(meeting *meeting) error {
 	}
 
 	// Validate time interval
-	start := time.Unix((int64)(meeting.StartTime), 0)
-	end := time.Unix((int64)(meeting.EndTime), 0)
+	start := time.Unix(meeting.StartTime, 0)
+	end := time.Unix(meeting.EndTime, 0)
 	if start.After(end) {
 		return errors.New("Start Time must be before End Time")
 	}
 
-	// Validate unique meeting for participators
-	Meetings := model.FindMeetingsBy(func(m *model.Meeting) bool {
+	// Validate unique meeting for sponsor
+	SMeetings := model.FindMeetingsBy(func(m *model.Meeting) bool {
 		if m.Sponsor == meeting.Sponsor {
 			return true
 		}
@@ -47,13 +46,41 @@ func validateMeeting(meeting *meeting) error {
 		return false
 	})
 
-	for _, participator := range meeting.Participators {
+	for _, m := range SMeetings {
+		if !((end.Before(time.Unix((int64)(m.StartTime), 0))) ||
+			(start.After(time.Unix((int64)(m.EndTime), 0)))) {
+			return errors.New("You have meeting to attend in the time interval")
+		}
+	}
 
+	// Validate unique meeting for participator
+	var PMeetings []model.Meeting
+	for _, participator := range meeting.Participators {
+		PMeetings = append(PMeetings, model.FindMeetingsBy(func(m *model.Meeting) bool {
+			if m.Sponsor == participator.Username {
+				return true
+			}
+
+			for _, p := range m.Participators {
+				if p.Username == participator.Username {
+					return true
+				}
+			}
+			return false
+		})...)
+	}
+
+	for _, m := range PMeetings {
+		if !((end.Before(time.Unix((int64)(m.StartTime), 0))) ||
+			(start.After(time.Unix((int64)(m.EndTime), 0)))) {
+			return errors.New("You have meeting to attend in the time interval")
+		}
 	}
 	return nil
 }
 
-func addMeeting(Title string, Participators []participator, StartTime int, EndTime int) error {
+// AddMeeting adds a valid meeting to db
+func AddMeeting(Title string, Participators []participator, StartTime string, EndTime string) error {
 	// Check log in
 	currentUser, err := model.GetCurrentUserName()
 	if err != nil {
@@ -77,15 +104,27 @@ func addMeeting(Title string, Participators []participator, StartTime int, EndTi
 
 	// TODO:Check Sponsor without in participator
 
-	newMeeting := &meeting{
+	s, err := time.Parse(timeFormat, StartTime)
+	if err != nil {
+		return errors.New("Start Time is invalid")
+	}
+	start := s.Unix()
+
+	e, err := time.Parse(timeFormat, EndTime)
+	if err != nil {
+		return errors.New("End Time is invalid")
+	}
+	end := e.Unix()
+
+	newMeeting := &model.Meeting{
 		Title:         Title,
 		Sponsor:       currentUser, //TODO:Change code for cur User
 		Participators: Participators,
-		StartTime:     StartTime,
-		EndTime:       EndTime,
+		StartTime:     start,
+		EndTime:       end,
 	}
 
-	if err := validateMeeting(newMeeting); err != nil {
+	if err := ValidateMeeting(newMeeting); err != nil {
 		return err
 	}
 
@@ -93,6 +132,6 @@ func addMeeting(Title string, Participators []participator, StartTime int, EndTi
 	return nil
 }
 
-func deleteMeeting(Title string) error {
-	return nil
+func DeleteMeeting(Title string) error {
+
 }

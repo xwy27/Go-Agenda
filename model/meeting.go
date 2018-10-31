@@ -8,8 +8,8 @@ type Meeting struct {
 	Title         string
 	Sponsor       string
 	Participators []Participator
-	StartTime     int
-	EndTime       int
+	StartTime     int64
+	EndTime       int64
 }
 
 type meetingsJSON struct {
