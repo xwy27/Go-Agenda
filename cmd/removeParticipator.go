@@ -48,6 +48,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	addParticipatorCmd.Flags().StringP("title", "t", "", "Meeting title")
-	addParticipatorCmd.Flags().StringP("participator", "p", "", "Meeting participator")
+	removeParticipatorCmd.Flags().StringP("title", "t", "", "Meeting title")
+	removeParticipatorCmd.Flags().StringP("participator", "p", "", "Meeting participator")
 }
