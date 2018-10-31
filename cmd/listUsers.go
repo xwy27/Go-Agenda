@@ -15,7 +15,8 @@
 package cmd
 
 import (
-	"fmt"
+	"Go-Agenda/global"
+	"Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +28,8 @@ var listUsersCmd = &cobra.Command{
 	Long:  `List all registered users in Agenda`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO:List all users
-		fmt.Println("listUsers called")
+		err := operation.ListUsers()
+		global.PrintError(err, "===============End of List================")
 	},
 }
 
