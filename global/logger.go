@@ -11,10 +11,13 @@ import (
 // example: ErrorLog.Println(...)
 var errorLog = log.New(os.Stderr, "", 0)
 
+// PrintError is useful
 func PrintError(err error, success string) {
 	if err != nil {
 		errorLog.Println(err.Error())
 		return
 	}
-	fmt.Println(success)
+	if len(success) != 0 {
+		fmt.Println(success)
+	}
 }
