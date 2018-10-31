@@ -102,6 +102,12 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 	if len(Participators) == 0 {
 		return errors.New("Meeting Participator is required")
 	}
+	for _, p := range Participators {
+		user := model.FindUserByName(p.Username)
+		if user == nil {
+			return errors.New("Participator: " + p.Username + " does not exist")
+		}
+	}
 
 	// Check Sponsor without in participator
 	for _, p := range Participators {
