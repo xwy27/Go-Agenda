@@ -1,32 +1,32 @@
 {
-  "meetings" : [
+  "Meetings" : [
     {
-      "title": "Title1",
-      "sponsor": "User1",
-      "participators": [
+      "Title": "Title1",
+      "Sponsor": "User1",
+      "Participators": [
         {
-          "username": "User3"
+          "Username": "User3"
         },
         {
-          "username": "User4"
+          "Username": "User4"
         }
       ],
-      "startTime": 182198417,
-      "endTime": 182198418
+      "StartTime": 182198417,
+      "EndTime": 182198418
     },
     {
-      "title": "Title2",
-      "sponsor": "User2",
-      "participators": [
+      "Title": "Title2",
+      "Sponsor": "User2",
+      "Participators": [
         {
-          "username": "User3"
+          "Username": "User3"
         },
         {
-          "username": "User4"
+          "Username": "User4"
         }
       ],
-      "startTime": 182198419,
-      "endTime": 182198420
+      "StartTime": 182198419,
+      "EndTime": 182198420
     }
   ]
 }

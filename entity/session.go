@@ -3,8 +3,8 @@ package entity
 import "errors"
 
 type Session struct {
-	login       bool
-	currentUser string
+	Login       bool
+	CurrentUser string
 }
 
 var CurrentUser Session

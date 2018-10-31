@@ -1,19 +1,19 @@
 package entity
 
 type participator struct {
-	username string
+	Username string
 }
 
 type Meeting struct {
-	title         string
-	sponsor       string
-	participators []participator
-	startTime     int
-	endTime       int
+	Title         string
+	Sponsor       string
+	Participators []participator
+	StartTime     int
+	EndTime       int
 }
 
 type meetingsJSON struct {
-	meetings []Meeting
+	Meetings []Meeting
 }
 
 type meetingsType struct {
