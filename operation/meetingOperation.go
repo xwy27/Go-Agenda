@@ -10,7 +10,7 @@ type participator = model.Participator
 
 // type session = model.Session
 
-const timeFormat = "2006-01-02 15:04:05"
+const timeFormat = "2006-01-02T15:04:05"
 
 // ValidateMeeting validates meeting time properties and returns, if something wrong, an error
 // Valid meeting contains start time and end time and the time interval is right while,
@@ -105,7 +105,7 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 		return errors.New("Meeting Title is required")
 	}
 
-	// Check Title existance
+	// Check Title existence
 	m, err := model.FindMeetingByTitle(Title)
 	if err != nil {
 		return err
@@ -200,6 +200,16 @@ func AddParticipator(title, username string) error {
 		return errors.New("User: " + username + " does not exist")
 	}
 
+	for _, p := range meeting.Participators {
+		if username == p.Username {
+			return errors.New(username + " has been the participator of the meeting")
+		}
+	}
+
+	if meeting.Sponsor == username {
+		return errors.New("You are the sponsor of the meeting")
+	}
+
 	return model.AddParticipator(title, username)
 }
 
@@ -262,10 +272,10 @@ func QuitMeeting(title string) error {
 	return errors.New("You have not attended the meeting")
 }
 
-// QueryMeetings queries the meetings matching the given time interval and returns,
+// QueryMeetings queries the sponsored meetings matching the given time interval and returns,
 // if something wrong, error
 func QueryMeetings(startTime, endTime string) ([]model.Meeting, error) {
-	_, err := model.GetCurrentUserName()
+	user, err := model.GetCurrentUserName()
 	if err != nil {
 		return nil, err
 	}
@@ -287,8 +297,13 @@ func QueryMeetings(startTime, endTime string) ([]model.Meeting, error) {
 	return model.FindMeetingsBy(func(m *model.Meeting) bool {
 		mStart := time.Unix(m.StartTime, 0)
 		mEnd := time.Unix(m.EndTime, 0)
-		if mStart.After(start) && mEnd.Before(end) {
+		if !(mStart.After(end) || mEnd.Before(start)) && m.Sponsor == user {
 			return true
+		}
+		for _, p := range m.Participators {
+			if user == p.Username {
+				return true
+			}
 		}
 		return false
 	})

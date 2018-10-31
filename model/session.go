@@ -55,6 +55,7 @@ func Logout() error {
 	if loginStatus() {
 		currentUser.Login = false
 		writeSession()
+		return nil
 	}
 	return errors.New("you've not logged in")
 }
