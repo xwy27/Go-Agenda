@@ -1,14 +1,15 @@
 package operation
 
 import (
-	"GO-AGENDA/entity"
 	"errors"
 	"time"
+
+	"github.com/siskonemilia/Go-Agenda/model"
 )
 
-type meeting = entity.Meeting
-type participator = entity.Participator
-type session = entity.Session
+type meeting = model.Meeting
+type participator = model.Participator
+type session = model.Session
 
 const timeFormat = "2006-01-02 15:04:05"
 
@@ -34,7 +35,7 @@ func validateMeeting(meeting *meeting) error {
 	}
 
 	// Validate unique meeting for participators
-	Meetings := entity.FindMeetingsBy(func(m *entity.Meeting) bool {
+	Meetings := model.FindMeetingsBy(func(m *model.Meeting) bool {
 		if m.Sponsor == meeting.Sponsor {
 			return true
 		}
@@ -54,7 +55,7 @@ func validateMeeting(meeting *meeting) error {
 
 func addMeeting(Title string, Participators []participator, StartTime int, EndTime int) error {
 	// Check log in
-	currentUser, err := entity.GetCurrentUserName()
+	currentUser, err := model.GetCurrentUserName()
 	if err != nil {
 		return err
 	}
@@ -65,7 +66,7 @@ func addMeeting(Title string, Participators []participator, StartTime int, EndTi
 	}
 
 	// Check Title existance
-	if entity.FindMeetingByTitle(Title) != nil {
+	if model.FindMeetingByTitle(Title) != nil {
 		return errors.New("Meeting: " + Title + " is existed")
 	}
 
@@ -88,10 +89,10 @@ func addMeeting(Title string, Participators []participator, StartTime int, EndTi
 		return err
 	}
 
-	entity.AddMeeting(newMeeting)
+	model.AddMeeting(newMeeting)
 	return nil
 }
 
 func deleteMeeting(Title string) error {
-
+	return nil
 }

@@ -1,4 +1,4 @@
-package entity
+package model
 
 // User is a type to store
 // the info of any single
