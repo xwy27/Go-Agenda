@@ -59,7 +59,7 @@ func ValidateMeeting(meeting *model.Meeting) error {
 	// Validate unique meeting for participator
 	var PMeetings []model.Meeting
 	for _, participator := range meeting.Participators {
-		PMeetings, err = append(PMeetings, model.FindMeetingsBy(func(m *model.Meeting) bool {
+		meetings, err := model.FindMeetingsBy(func(m *model.Meeting) bool {
 			if m.Sponsor == participator.Username {
 				return true
 			}
@@ -70,7 +70,11 @@ func ValidateMeeting(meeting *model.Meeting) error {
 				}
 			}
 			return false
-		})...)
+		})
+		if err != nil {
+			return err
+		}
+		PMeetings = append(PMeetings, meetings...)
 	}
 	if err != nil {
 		return err
@@ -100,7 +104,7 @@ func AddMeeting(Title string, Participators []participator, StartTime string, En
 	}
 
 	// Check Title existance
-	m, err := model.FindMeetingByTitle(Title);
+	m, err := model.FindMeetingByTitle(Title)
 	if err != nil {
 		return err
 	}
@@ -212,7 +216,7 @@ func DeleteParticipator(title, username string) error {
 	if meeting == nil {
 		return errors.New("Meeting: " + title + " does not exist")
 	}
-	
+
 	if meeting.Sponsor != currentUser {
 		return errors.New("You don't have the authority to delete participator of others' meeting")
 	}
@@ -222,7 +226,7 @@ func DeleteParticipator(title, username string) error {
 		return errors.New("User: " + username + " does not exist")
 	}
 
-	for _, p := meeting.Participators {
+	for _, p := range meeting.Participators {
 		if p.Username == username {
 			return model.DeleteParticipator(title, username)
 		}
@@ -256,22 +260,21 @@ func QuitMeeting(title string) error {
 	return errors.New("You have not attended the meeting")
 }
 
-
 // QueryMeetings queries the meetings matching the given time interval and returns,
 // if something wrong, error
 func QueryMeetings(startTime, endTime string) ([]model.Meeting, error) {
-	currentUser, err := model.GetCurrentUserName()
+	_, err := model.GetCurrentUserName()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	start, err := time.Parse(timeFormat, startTime)
-	if (err != nil) {
+	if err != nil {
 		return nil, errors.New("Invalid Start Time")
 	}
 
 	end, err := time.Parse(timeFormat, endTime)
-	if (err != nil) {
+	if err != nil {
 		return nil, errors.New("Invalid End Time")
 	}
 
@@ -279,10 +282,10 @@ func QueryMeetings(startTime, endTime string) ([]model.Meeting, error) {
 		return nil, errors.New("End time must be after Start time")
 	}
 
-	return model.FindMeetingsBy(func(m *model.Meeting) {
+	return model.FindMeetingsBy(func(m *model.Meeting) bool {
 		mStart := time.Unix(m.StartTime, 0)
 		mEnd := time.Unix(m.EndTime, 0)
-		if (mStart.After(start) && mEnd.Before(end)) {
+		if mStart.After(start) && mEnd.Before(end) {
 			return true
 		}
 		return false
@@ -295,15 +298,15 @@ func ClearMeetings() error {
 		return err
 	}
 
-	meetings, err := model.FindMeetingsBy(func(m *model.Meeting) {
-		if (m.Sponsor == currentUser) {
+	meetings, err := model.FindMeetingsBy(func(m *model.Meeting) bool {
+		if m.Sponsor == currentUser {
 			return true
 		}
 		return false
 	})
 
 	for _, m := range meetings {
-		err = model.DeleteMeeting(m.title)
+		err = model.DeleteMeeting(m.Title)
 		if err != nil {
 			return err
 		}
