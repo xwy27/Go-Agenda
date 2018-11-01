@@ -85,7 +85,7 @@ func ValidateMeeting(meeting *model.Meeting) error {
 	for _, m := range PMeetings {
 		if !((end.Before(time.Unix((int64)(m.StartTime), 0))) ||
 			(start.After(time.Unix((int64)(m.EndTime), 0)))) {
-			return errors.New("You have meeting to attend in the time interval")
+			return errors.New("One of the participators has meeting to attend in the time interval")
 		}
 	}
 
@@ -259,7 +259,7 @@ func QuitMeeting(title string) error {
 	if err != nil {
 		return err
 	}
-	if meeting != nil {
+	if meeting == nil {
 		return errors.New("Meeting: " + title + " does not exist")
 	}
 

@@ -1,18 +1,1 @@
-{
-  "Meetings": [
-    {
-      "Title": "123",
-      "Sponsor": "user3",
-      "Participators": [
-        {
-          "Username": "user2"
-        },
-        {
-          "Username": "user1"
-        }
-      ],
-      "StartTime": 946807200,
-      "EndTime": 978429600
-    }
-  ]
-}
+{"Meetings":null}
