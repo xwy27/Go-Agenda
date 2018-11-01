@@ -22,6 +22,9 @@ type Storage struct {
 // by storage
 func (storage *Storage) load(v interface{}) error {
 	file, err := os.Open(storage.filePath)
+	if os.IsNotExist(err) {
+		return err
+	}
 	if err != nil {
 		return errors.New("Error occuried while opening file to load:\n" + err.Error())
 	}

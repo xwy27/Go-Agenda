@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"os"
 )
 
 // Participator is the type
@@ -42,7 +43,7 @@ func initMeetings() error {
 		return nil
 	}
 	isMeetingInit = true
-	meetings.storage.filePath = "data/meetings.json"
+	meetings.storage.filePath = os.Getenv("GOPATH") + "src/github.com/xwy27/Go-Agenda/data/meetings.json"
 	meetings.dictionary = make(map[string]Meeting)
 	return loadMeetings()
 }
@@ -141,6 +142,9 @@ func AddParticipator(title, username string) error {
 
 func loadMeetings() error {
 	err := meetings.storage.load(&meetingsDB)
+	if os.IsNotExist(err) {
+		return nil
+	}
 	if err != nil {
 		return err
 	}

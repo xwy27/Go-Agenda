@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"os"
 )
 
 // User is a type of each
@@ -38,7 +39,7 @@ func initUsers() error {
 		return nil
 	}
 	isUserInit = true
-	users.storage.filePath = "data/users.json"
+	users.storage.filePath = os.Getenv("GOPATH") + "src/github.com/xwy27/Go-Agenda/data/users.json"
 	users.dictionary = make(map[string]User)
 	return loadUsers()
 }
@@ -160,6 +161,9 @@ func CheckPass(username, password string) bool {
 
 func loadUsers() error {
 	err := users.storage.load(&usersDB)
+	if os.IsNotExist(err) {
+		return nil
+	}
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,9 @@
 package model
 
-import "errors"
+import (
+	"errors"
+	"os"
+)
 
 type Session struct {
 	Login       bool
@@ -16,7 +19,7 @@ func initSession() error {
 		return nil
 	}
 	isSessionInit = true
-	sessionStorage.filePath = "data/session.json"
+	sessionStorage.filePath = os.Getenv("GOPATH") + "src/github.com/xwy27/Go-Agenda/data/session.json"
 	return loadSession()
 }
 
@@ -71,7 +74,13 @@ func Logout() error {
 }
 
 func loadSession() error {
-	return sessionStorage.load(&currentUser)
+	err := sessionStorage.load(&currentUser)
+	if os.IsNotExist(err) {
+		currentUser.Login = false
+		currentUser.CurrentUser = ""
+		return nil
+	}
+	return err
 }
 
 func writeSession() error {
