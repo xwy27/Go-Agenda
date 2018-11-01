@@ -6,6 +6,10 @@
 
 [Cobra](https://github.com/spf13/cobra#overview)
 
+## 测试
+
+Version1.0：静态测试通过
+
 ## 使用说明
 
 1. Go Support
@@ -32,7 +36,7 @@
 
 - Usage:
 
-      Agenda register
+      Go-Agenda register
         -u | --username Username
         -p | --password Password
         -e | --email Email
@@ -48,7 +52,7 @@
 
 - Usage:
 
-      Agenda login
+      Go-Agenda login
         -u | --username Username
         -p | --password Password
 
@@ -62,7 +66,7 @@
 
 - Usage:
 
-      Agenda logout
+      Go-Agenda logout
 
 - Description:
 
@@ -72,7 +76,7 @@
 
 - Usage
 
-      Agenda listUsers
+      Go-Agenda listUsers
 
 - Description:
 
@@ -82,7 +86,7 @@
 
 - Usage
 
-      Agenda deleteUser
+      Go-Agenda deleteUser
 
 - Description:
 
@@ -98,7 +102,7 @@
 
 - Usage:
 
-      Agenda createMeeting
+      Go-Agenda createMeeting
         -t | --title Title
         -p | --participator Participator
         -s | --startTime yyyy-mm-ddThh:mm
@@ -121,7 +125,7 @@
 
 - Usage:
 
-      Agenda addParticipator | removeParticipator
+      Go-Agenda addParticipator | removeParticipator
         -t | --title Title
         -p | --Participator Participator
 
@@ -137,7 +141,7 @@
 
 - Usage:
 
-      Agenda queryMeetings
+      Go-Agenda queryMeetings
         -s | --startTime YYYY-MM-DD HH:MM
         -e | --endTime YYYY-MM-DD HH:MM
 
@@ -155,7 +159,7 @@
 
 - Usage:
 
-      Agenda cancelMeeting
+      Go-Agenda cancelMeeting
         -t | --title Title
 
 - Description
@@ -168,7 +172,7 @@
 
 - Usage:
 
-      Agenda quitMeeting
+      Go-Agenda quitMeeting
         -t | --title Title
 
 - Description
@@ -181,7 +185,7 @@
 
 - Usage:
 
-      Agenda clearMeeting
+      Go-Agenda clearMeeting
 
 - Description:
   
