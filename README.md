@@ -142,8 +142,8 @@ Version1.0：静态测试通过
 - Usage:
 
       Go-Agenda queryMeetings
-        -s | --startTime YYYY-MM-DD HH:MM
-        -e | --endTime YYYY-MM-DD HH:MM
+        -s | --startTime yyyy-mm-ddThh:mm
+        -e | --endTime yyyy-mm-ddThh:mm
 
 - Description:
 
