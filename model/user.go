@@ -4,9 +4,9 @@ import (
 	"errors"
 )
 
-// User is a type to store
-// the info of any single
-// user account
+// User is a type of each
+// account entity that
+// exists in the JSON file
 type User struct {
 	Username string
 	Password string
@@ -14,13 +14,16 @@ type User struct {
 	Phone    string
 }
 
-// usersJSON specific the json type of
-// users
+// usersJSON specific the format of
+// the JSON file of the collection
+// of Users
 type usersJSON struct {
 	Users []User
 }
 
-// UsersType
+// usersType gives the storage of
+// Users and a map from username
+// to each account
 type usersType struct {
 	storage    Storage
 	dictionary map[string]User
@@ -40,7 +43,11 @@ func initUsers() error {
 	return loadUsers()
 }
 
-// AddUser 成功返回nil
+// AddUser add the user passed in
+// to the account set and write
+// it to file.
+// If the username is occupied, an
+// error will be returned.
 func AddUser(user *User) error {
 	if err := initUsers(); err != nil {
 		return err
@@ -52,7 +59,10 @@ func AddUser(user *User) error {
 	return writeUsers()
 }
 
-// DeleteUser 成功返回nil
+// DeleteUser deletes a user with
+// the username passed in. If no
+// such user exists, an error will
+// be returned.
 func DeleteUser(username string) error {
 	if err := initUsers(); err != nil {
 		return err
@@ -102,6 +112,9 @@ func DeleteUser(username string) error {
 	return errors.New("no such user")
 }
 
+// FindUsersBy uses the filter function
+// to filter all users, and return those
+// users who pass the filter.
 func FindUsersBy(filter func(*User) bool) ([]User, error) {
 	if err := initUsers(); err != nil {
 		return nil, err
@@ -117,7 +130,10 @@ func FindUsersBy(filter func(*User) bool) ([]User, error) {
 	return resultUsers, nil
 }
 
-// FindUserByName 失败返回nil
+// FindUserByName tries to find
+// a user with its username. And
+// return it If no such user found,
+// nil will be returned.
 func FindUserByName(username string) *User {
 	if err := initUsers(); err != nil {
 		return nil
@@ -128,7 +144,9 @@ func FindUserByName(username string) *User {
 	return nil
 }
 
-// CheckPass 成功返回true
+// CheckPass check if the username
+// and password passed in matches
+// each other.
 func CheckPass(username, password string) bool {
 	if err := initUsers(); err != nil {
 		return false

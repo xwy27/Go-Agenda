@@ -5,18 +5,31 @@ import (
 	"fmt"
 )
 
+// RegisterUser tries to register an account
+// with the given information
 func RegisterUser(username, password, email, phone string) error {
-	return model.AddUser(&model.User{username, password, email, phone})
+	return model.AddUser(&model.User{
+		Username: username,
+		Password: password,
+		Email:    email,
+		Phone:    phone})
 }
 
+// LoginUser tries to login with
+// the given infomation.
 func LoginUser(username, password string) error {
 	return model.Login(username, password)
 }
 
+// LogoutUser tries to logout
+// current user.
 func LogoutUser() error {
 	return model.Logout()
 }
 
+// ListUsers will list all users
+// if you've logged in, else an
+// error will be returned.
 func ListUsers() error {
 	_, err := model.GetCurrentUserName()
 	if err != nil {
@@ -39,6 +52,9 @@ func ListUsers() error {
 	return nil
 }
 
+// DeleteUser tries to delete the
+// account that has logged in, else
+// an error will be returned.
 func DeleteUser() error {
 	username, err := model.GetCurrentUserName()
 	if err != nil {

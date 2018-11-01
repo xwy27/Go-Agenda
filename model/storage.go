@@ -1,4 +1,5 @@
 // Package model implements the data models
+// for Users, Meetings and Session
 package model
 
 import (

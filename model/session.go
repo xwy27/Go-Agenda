@@ -24,7 +24,10 @@ func loginStatus() bool {
 	return currentUser.Login
 }
 
-// 如果未登录，后者不为空
+// GetCurrentUserName return the username
+// of the user who has logged in. If no
+// user has logged in, an error will be
+// returned.
 func GetCurrentUserName() (string, error) {
 	if err := initSession(); err != nil {
 		return "", err
@@ -35,6 +38,10 @@ func GetCurrentUserName() (string, error) {
 	return "", errors.New("you've not logged in")
 }
 
+// Login accept a username and a password,
+// and it will try to login with these two
+// parameters. An error will be returned if
+// this attempt fails.
 func Login(username, password string) error {
 	if err := initSession(); err != nil {
 		return err
@@ -48,6 +55,9 @@ func Login(username, password string) error {
 	return errors.New("invalid username or password")
 }
 
+// Logout tries to logout from current user,
+// if you've not logged in, an error will be
+// returned.
 func Logout() error {
 	if err := initSession(); err != nil {
 		return err
