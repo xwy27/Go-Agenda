@@ -1,21 +1,11 @@
-# Go-Agenda 命令设计
-
-## help
-
-- Usage: 
-
-      Go-Agenda help [Command]
-
-- Description:
-  
-  打印程序或指令的使用帮助
+# Agenda 命令设计
 
 ## register
 
-- Usage: 
-      
-      Go-Agenda register 
-        -u | --username Username 
+- Usage:
+
+      Agenda register
+        -u | --username Username
         -p | --password Password
         -e | --email Email
         -t | --telephone Phone_Number
@@ -26,46 +16,45 @@
 
   如果注册时提供的用户名已由其他用户使用，反馈一个出错信息；成功注册后，反馈一个成功注册的信息。
 
-
 ## login
 
 - Usage:
 
-      Go-Agenda login
+      Agenda login
         -u | --username Username
         -p | --password Password
 
 - Description:
 
   用户使用用户名和密码登录 Agenda 系统。
-    
+
   用户名和密码同时正确则登录成功并反馈一个成功登录的信息。否则，登录失败并反馈一个失败登录的信息。
 
 ## logout
 
 - Usage:
 
-      Go-Agenda logout
+      Agenda logout
 
 - Description:
 
     已登录的用户登出系统后，只能使用用户注册和用户登录功能。
 
-## list-users
+## listUsers
 
 - Usage
 
-      Go-Agenda listUsers
+      Agenda listUsers
 
 - Description:
 
     已登录的用户可以查看已注册的所有用户的用户名、邮箱及电话信息
 
-## delete-user
+## deleteUser
 
 - Usage
 
-      Go-Agenda deleteUser
+      Agenda deleteUser
 
 - Description:
 
@@ -77,15 +66,15 @@
 
   以该用户为 参与者 的会议将从 参与者 列表中移除该用户。若因此造成会议 参与者 人数为0，则会议也将被删除。
 
-## create-meeting
+## createMeeting
 
 - Usage:
 
-      Go-Agenda createMeeting
+      Agenda createMeeting
         -t | --title Title
         -p | --participator Participator
-        -s | --startTime YYYY-MM-DD HH:MM
-        -e | --endTime YYYY-MM-DD HH:MM
+        -s | --startTime yyyy-mm-ddThh:mm
+        -e | --endTime yyyy-mm-ddThh:mm
 
 - Description:
 
@@ -98,17 +87,16 @@
 
   注意，任何用户都无法分身参加多个会议。如果用户已有的会议安排（作为发起者或参与者）与将要创建的会议在时间上重叠 （允许仅有端点重叠的情况），则无法创建该会议。
 
-  用户应获得适当的反馈信息，以便得知是成功地创建了新会议，还是在创建过程中出现了某些错误。 
+  用户应获得适当的反馈信息，以便得知是成功地创建了新会议，还是在创建过程中出现了某些错误。
 
-
-## add / remove-participator
+## add / remove Participator
 
 - Usage:
 
-      Go-Agenda addParticipator | removeParticipator
+      Agenda addParticipator | removeParticipator
         -t | --title Title
         -p | --Participator Participator
- 
+
 - Description:
 
   已登录的用户可以向 自己发起的某一会议增加/删除 参与者 。
@@ -117,11 +105,11 @@
   
   删除会议参与者后，若因此造成会议 参与者 人数为0，则会议也将被删除。
 
-## query-Meetings
+## queryMeetings
 
 - Usage:
 
-      Go-Agenda queryMeetings
+      Agenda queryMeetings
         -s | --startTime YYYY-MM-DD HH:MM
         -e | --endTime YYYY-MM-DD HH:MM
 
@@ -135,11 +123,11 @@
   
   查询会议的结果应包括用户作为 发起者或参与者 的会议。
 
-## cancel-meeting
+## cancelMeeting
 
 - Usage:
 
-      Go-Agenda cancelMeeting
+      Agenda cancelMeeting
         -t | --title Title
 
 - Description
@@ -148,11 +136,11 @@
   
   取消会议时，需提供唯一标识：会议主题（title）。
 
-## quit-meeting
+## quitMeeting
 
 - Usage:
 
-      Go-Agenda quitMeeting
+      Agenda quitMeeting
         -t | --title Title
 
 - Description
@@ -161,11 +149,11 @@
   
   退出会议时，需提供一个唯一标识：会议主题（title）。若因此造成会议 参与者 人数为0，则会议也将被删除。
 
-## clear-meeting
+## clearMeeting
 
 - Usage:
 
-      Go-Agenda clearMeeting
+      Agenda clearMeeting
 
 - Description:
   

@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/operation"
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -33,8 +33,7 @@ Specify the meeting title and the new participator name.`,
 		global.PrintError(err, "")
 		participator, err := cmd.Flags().GetString("participator")
 		global.PrintError(err, "")
-		// fmt.Println("removeParticipator called by " + title)
-		// fmt.Println("removeParticipator called by " + participator)
+
 		err = operation.DeleteParticipator(title, participator)
 		global.PrintError(err, "Delete "+participator+" successfully")
 	},

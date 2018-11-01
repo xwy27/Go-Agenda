@@ -15,9 +15,8 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/operation"
-	"fmt"
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -29,17 +28,16 @@ var registerCmd = &cobra.Command{
 	Long:  `Register an account in Agenda with username, password, email and telephone. Start with managing your own meetings and attending others' meetings!`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		username, _ := cmd.Flags().GetString("username")
-		password, _ := cmd.Flags().GetString("password")
-		email, _ := cmd.Flags().GetString("email")
-		telephone, _ := cmd.Flags().GetString("telephone")
-		// TODO:Error handle
-		fmt.Println("register called by" + username)
-		fmt.Println("register called by" + password)
-		fmt.Println("register called by" + email)
-		fmt.Println("register called by" + telephone)
-		// TODO:Register an account
-		err := operation.RegisterUser(username, password, email, telephone)
+		username, err := cmd.Flags().GetString("username")
+		global.PrintError(err, "")
+		password, err := cmd.Flags().GetString("password")
+		global.PrintError(err, "")
+		email, err := cmd.Flags().GetString("email")
+		global.PrintError(err, "")
+		telephone, err := cmd.Flags().GetString("telephone")
+		global.PrintError(err, "")
+
+		err = operation.RegisterUser(username, password, email, telephone)
 		global.PrintError(err, "Register successfully")
 	},
 }

@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/operation"
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -30,8 +30,7 @@ var quitMeetingCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		title, err := cmd.Flags().GetString("title")
 		global.PrintError(err, "")
-		// fmt.Println("quitMeeting called by " + title)
-		// Quit meeting
+
 		err = operation.QuitMeeting(title)
 		global.PrintError(err, "Quit "+title+" successfully")
 	},

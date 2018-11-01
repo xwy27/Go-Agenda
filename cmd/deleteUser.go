@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/operation"
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,6 @@ var deleteUserCmd = &cobra.Command{
 	Short: "Delete user",
 	Long:  `Delete current login user`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Delete current user
 		err := operation.DeleteUser()
 		global.PrintError(err, "Your account has been deleted.")
 	},

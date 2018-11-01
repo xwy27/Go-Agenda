@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/operation"
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,6 @@ var listUsersCmd = &cobra.Command{
 	Short: "List all usres",
 	Long:  `List all registered users in Agenda`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO:List all users
 		err := operation.ListUsers()
 		global.PrintError(err, "===============End of List================")
 	},

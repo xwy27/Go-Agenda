@@ -15,11 +15,11 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/model"
-	"Go-Agenda/operation"
-	"fmt"
 	"strings"
+
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/model"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -46,10 +46,7 @@ Agenda createMeeting -t=Title -p=user1,user2,user3 -s=2006-01-02 15:04 -e=2006-0
 		global.PrintError(err, "")
 		endTime, err := cmd.Flags().GetString("endTime")
 		global.PrintError(err, "")
-		fmt.Println("createMeeting called by " + title)
-		fmt.Println("createMeeting called by " + participators)
-		fmt.Println("createMeeting called by " + startTime)
-		fmt.Println("createMeeting called by " + endTime)
+
 		temp := strings.Split(participators, ",")
 		var p []model.Participator
 		for _, t := range temp {

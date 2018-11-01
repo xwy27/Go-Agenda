@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"Go-Agenda/global"
-	"Go-Agenda/operation"
+	"github.com/xwy27/Go-Agenda/global"
+	"github.com/xwy27/Go-Agenda/operation"
 
 	"github.com/spf13/cobra"
 )
@@ -28,7 +28,6 @@ var clearMeetingCmd = &cobra.Command{
 	Long:  `Clear all meetings sponsored by user`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		// fmt.Println("clearMeeting called")
 		global.PrintError(operation.ClearMeetings(), "Clear successfully")
 	},
 }

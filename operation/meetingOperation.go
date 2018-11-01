@@ -1,9 +1,10 @@
 package operation
 
 import (
-	"Go-Agenda/model"
 	"errors"
 	"time"
+
+	"github.com/xwy27/Go-Agenda/model"
 )
 
 type participator = model.Participator
