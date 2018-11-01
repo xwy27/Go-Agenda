@@ -1,28 +1,3 @@
 {
-  "Users": [
-    {
-      "Username": "user1",
-      "Password": "123",
-      "Email": "123",
-      "Phone": "123"
-    },
-    {
-      "Username": "user2",
-      "Password": "123",
-      "Email": "123",
-      "Phone": "123"
-    },
-    {
-      "Username": "user3",
-      "Password": "123",
-      "Email": "123",
-      "Phone": "123"
-    },
-    {
-      "Username": "user4",
-      "Password": "123",
-      "Email": "123",
-      "Phone": "123"
-    }
-  ]
+  "Users": []
 }
