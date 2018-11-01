@@ -4,10 +4,18 @@ import (
 	"errors"
 )
 
+// Participator is the type
+// which specifics the format
+// that a participator exists
+// in the JSON file.
 type Participator struct {
 	Username string
 }
 
+// Meeting is the type which
+// specifics the format
+// that a meeting exists
+// in the JSON file.
 type Meeting struct {
 	Title         string
 	Sponsor       string
@@ -39,6 +47,10 @@ func initMeetings() error {
 	return loadMeetings()
 }
 
+// AddMeeting accept a meeting pointer
+// as the parameter. It will tries to
+// add this meeting to current meeting
+// set without any check.
 func AddMeeting(meeting *Meeting) error {
 	if err := initMeetings(); err != nil {
 		return err
@@ -47,6 +59,8 @@ func AddMeeting(meeting *Meeting) error {
 	return writeMeetings()
 }
 
+// DeleteMeeting tries to delete a
+// meeting with the given title.
 func DeleteMeeting(title string) error {
 	if err := initMeetings(); err != nil {
 		return err
@@ -55,6 +69,10 @@ func DeleteMeeting(title string) error {
 	return writeMeetings()
 }
 
+// FindMeetingsBy will use the filter
+// passed in to filter those meetings
+// that meet the requirement and return
+// them.
 func FindMeetingsBy(filter func(*Meeting) bool) ([]Meeting, error) {
 	if err := initMeetings(); err != nil {
 		return []Meeting{}, err
@@ -68,6 +86,9 @@ func FindMeetingsBy(filter func(*Meeting) bool) ([]Meeting, error) {
 	return resultMeetings, nil
 }
 
+// FindMeetingByTitle tries to find
+// the meeting with the given title
+// and return it to you.
 func FindMeetingByTitle(title string) (*Meeting, error) {
 	if err := initMeetings(); err != nil {
 		return nil, err
@@ -78,6 +99,9 @@ func FindMeetingByTitle(title string) (*Meeting, error) {
 	return nil, nil
 }
 
+// DeleteParticipator tries to delete a
+// paticipator with the given username
+// from a meeting with given title.
 func DeleteParticipator(title, username string) error {
 	if err := initMeetings(); err != nil {
 		return err
@@ -99,6 +123,9 @@ func DeleteParticipator(title, username string) error {
 	return errors.New("no such meeting")
 }
 
+// AddParticipator tries to append
+// a participator with the given
+// username without any check.
 func AddParticipator(title, username string) error {
 	if err := initMeetings(); err != nil {
 		return err
